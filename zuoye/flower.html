@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        function isflower()
+        {
+            var a=document.getElementById("tx").value
+            a=parseInt(a)
+            var x,y,z;
+            x=a%10;
+            y=parseInt((a%100)/10);
+            z=parseInt(a/100);
+            if(a==x**3+y**3+z**3)
+               alert("该数是水仙花数");
+            else
+               alert("该数不是水仙花数");
+           
+        }
+    
+    </script>
+</head>
+<body>
+    输入一个三位数:<input type="text" id="tx" >
+    <button onclick="isflower()">确定</button>
+</body>
+</html>
