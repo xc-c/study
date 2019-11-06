@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        function strings()
+        {
+            var a=document.getElementById("tx").value;
+            a=String(a);
+            var s="";
+            for(i=0;i<a.length;i++)
+            {
+                s="";
+                for(j=i;j<a.length;j++)
+                {
+                    s=s+a.charAt(j);
+                    console.log(s);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    输入一个字符串:<input type="text" id="tx" >
+    <button onclick="strings()">确定</button>
+</body>
+</html>
