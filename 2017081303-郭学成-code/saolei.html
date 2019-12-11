@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Saolei</title>
+    <style>
+       #grid{
+           margin:auto;
+       }
+       .blocks{
+           width: 30px;
+           height:30px;
+           /* line-height: 30px; */
+           display:block;
+           text-align: center;
+           border: solid 1px rgb(216, 187, 133);
+           background-color: rgb(241, 191, 98);
+           /* user-select:none; */
+           cursor: pointer;
+       }
+       .blocks:hover{
+           background:sandybrown;
+       }
+       #lei{
+           text-align: center;
+           margin-bottom:20px;
+       }
+       .lei{
+           height:25px;
+           width:150px;
+           line-height: 25px;
+           display: inline-block;
+           border: solid 1px #000000;
+           margin-left: 20px;
+           margin-right: 20px;  /*20px */
+       }
+       /* .button1{
+           
+           border: 0;
+           background-color: white;
+           margin-top: 30px;
+       } */
+    </style>
+</head>
+<body ondragstart="return false" oncontextmenu="self.event.returnValue=false">
+    <div id="lei">
+        <span class="lei">剩余雷数:<label id="count">0</label></span>
+        <!-- <button id="button1" style="border: 0; background-color: white;"><img src="img/happy.png" ></button> -->
+        <span class="lei">TIME:<label id="time">0</label>s</span>
+    </div>
+    <table id="grid"></table>
+    <script>
+        var row=10,col=10;
+        var grid=createGrid(); 
+        var maxlei=10;
+        var isFirstOpen=true;
+        var isMine;
+        var isflog;
+        var leicount=document.getElementById('count');
+        leicount.innerHTML=maxlei;
+    
+        // alert(parseInt(count.innerHTML));
+        // count.innerHTML=parseInt(count.innerHTML)-1;
+        // alert(count.innerHTML);
+        var time=document.getElementById("time");
+        var timer=setInterval(function()
+        {
+            var seconds=(parseFloat(time.innerHTML)+0.1).toFixed(1);
+            time.innerHTML=seconds;
+        },100)
+       function createGrid()
+       {
+             var gridH="";
+             for(i=0;i<row;i++)
+            {
+                gridH+='<tr>';
+                for(j=0;j<col;j++)
+                {
+                    gridH+='<td><span class="blocks" onmousedown="blockClick('+i+','+j+',event)"</span></td>';
+                }
+                gridH+='</tr>';
+            }
+            document.getElementById("grid").innerHTML=gridH;
+            
+            let blocks=document.getElementsByClassName("blocks");
+            var gridf=new Array();
+            for(i=0;i<blocks.length;i++)
+            {
+                if(i%col==0)
+                {
+                    gridf.push(new Array());
+                }
+                blocks[i].count=0;
+                gridf[parseInt(i/col)].push(blocks[i]);
+            }
+            return gridf;
+       }
+      function blockClick(i,j,e)
+      {
+           var isflag=false;
+           var isMine=false;
+          if(grid[i][j].isOpen)
+          {
+              return;
+          }
+          if(e.button==0)
+          {
+             if(isFirstOpen)
+             {
+                 isFirstOpen=false;
+                 var count=0;
+                 while(count<maxlei)
+                 {
+                     var ri=Math.floor(Math.random()*row);
+                     var rj=Math.floor(Math.random()*col);
+                     if(!(ri==i&&rj==j)&&!grid[ri][rj].isMine)
+                     {
+                         grid[ri][rj].isMine=true;
+                         count++;
+                         for(i=ri-1;i<ri+2;i++)
+                         {
+                             for(j=rj-1;j<rj+2;j++)
+                             {
+                                 if(i>-1&&j>-1&&i<row&&j<col)
+                                 {
+                                     grid[i][j].count++;
+                                 }
+                             }
+                         }
+                     }
+
+                 }
+             }
+             blockOpen(i,j);
+
+             function blockOpen(i,j)
+             {
+                 var block=grid[i][j];
+                 op(block);
+
+                 function op(block)
+                 {
+                     block.isOpen=true;
+                     block.style.background="white";
+                     block.style.cursor='default';
+                 }
+                 if(block.isMine)
+                 {
+                     block.innerHTML="💣";
+                     for(i=0;i<row;i++)
+                     {
+                         for(j=0;j<col;j++)
+                         {
+                             block=grid[i][j];
+                             if(!block.isOpen&&block.isMine)
+                             {
+                                 op(block);
+                                 block.innerHTML="💣";
+                             }
+                         }
+                     }
+                     clearInterval(timer);
+                   alert("游戏结束");
+                 }
+                 else if(block.count==0)
+                 {   
+                     for( var i=i-1;i<i+2;i++)
+                     {
+                        
+                         for( var j=j-1;j<j+2;j++)
+                         {
+                             if(i>-1&&j>-1&&i<row&&j<col&&!grid[i][j].isOpen&&!grid[i][j].isMine)
+                             {
+                               
+                                blockOpen(i,j);
+                             }
+                             if(j>9)
+                             {
+                                 break;
+                             }
+                             
+                         }
+                         if(i>9)
+                         {
+                             break;
+                         }
+                        
+                     }
+                 }
+                 else
+                 {
+                     block.innerHTML=block.count;
+                 }
+
+             }
+
+
+
+          }
+          else if(e.button==2)
+          {
+              var block=grid[i][j];
+              if(block.innerHTML!="🚩"&&parseInt(leicount.innerHTML)!=0)
+              { 
+                  
+                  block.innerHTML="🚩";  
+                  block.isflog=true;  
+                  leicount.innerHTML=parseInt(leicount.innerHTML)-1;  
+                       
+                  
+              }
+              else
+              {
+                  block.innerHTML="";
+              }
+          }
+
+        
+
+
+          
+  
+      }
+         
+      var isWin=true;
+          for(i=0;i<row;i++)
+          {    
+              for(j=0;j<col;j++)
+              { 
+
+                  if(!block.isMine&&!block.isOpen)
+                  {
+                   
+                      isWin=false;
+                  }
+              }
+              
+          }
+          
+          if(isWin)
+          {
+              clearInterval(timer);
+              alert("游戏胜利");
+          }
+
+
+    </script>
+</body>
+</html>
